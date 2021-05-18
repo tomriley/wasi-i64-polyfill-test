@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>i64 polyfill test</title>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="dist/bundle.js"></script>
+
+
+  </head>
+  <body>
+    <p>
+      Both buttons call through to wasm code that calls wasi system call clock_time_get with involves an i64 parameter not
+      currently support on ios safari/chrome. only the polyfilled version will work on ios safari/chrome.
+    </p>
+    <button type="button" id="button_original">original</button>
+    <button type="button" id="button_polyfilled">polyfilled</button>
+
+    <script>
+      Example.loadWasm("./dist/original.wasm").then((mod) => window.WASM = mod);
+      let startButton = document.getElementById("start");
+
+      document.getElementById("button_original").addEventListener("click", () => {
+        // todo call a method
+        try {
+          alert(`get_millis returned ${WASM.get_millis()}`);
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+
+      Example.loadWasm("./dist/polyfilled.wasm").then((mod) => window.WASM_POLYFILLED = mod);
+      document.getElementById("button_polyfilled").addEventListener("click", () => {
+        // todo call a method
+        try {
+          alert(`get_millis returned ${WASM_POLYFILLED.get_millis()}`);
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+    </script>
+
+
+  </body>
+</html>
